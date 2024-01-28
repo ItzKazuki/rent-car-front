@@ -5,6 +5,9 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}"
   ],
   theme: {
+    fontFamily: {
+      jakartaSans: ['Plus Jakarta Sans', 'sans-serif']
+    },
     extend: {},
   },
   plugins: [],
