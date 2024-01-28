@@ -5,6 +5,7 @@ import CarList from "../components/CarList";
 
 export default function AvailableCars() {
     const [cars, setCars] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     // function handleClick(id) {
     //     // navigate("/car/" + id)
@@ -13,8 +14,10 @@ export default function AvailableCars() {
 
     useEffect(() => {
         //het from api
+        setLoading(true);
         http.get("/car/show").then(data => {
-            setCars(data.cars)
+            setCars(data.cars);
+            setLoading(false);
         })
     }, [setCars]);
     
@@ -22,17 +25,19 @@ export default function AvailableCars() {
         <Page>
             <h3 className="text-3xl font-bold">Available cars</h3>
             <p>Rent your car now!</p>
-            <div className="flex flex-row flex-wrap justify-center">
-                {cars.map(car => (
-                    <CarList 
-                    key={car.id}
-                    id={car.id}
-                    title={car.name}
-                    photo={car.car_photo}
-                    description={car.description}
-                    price={car.price}/>
-                ))}
-            </div>
+            {loading ? "Getting From API" : (
+                <div className="flex flex-row flex-wrap justify-center">
+                    {cars.map(car => (
+                        <CarList 
+                        key={car.id}
+                        id={car.id}
+                        title={car.name}
+                        photo={car.car_photo}
+                        description={car.description}
+                        price={car.price}/>
+                    ))}
+                </div>
+            )}
         </Page>
     );
 }

@@ -11,8 +11,8 @@ export default function Navbar({ activePath, user }) {
             name: 'Available Cars'
         },
         {
-            path: '/rent',
-            name: 'You Rent'
+            path: '/about',
+            name: 'About Us'
         },
     ]
     return (
@@ -22,27 +22,23 @@ export default function Navbar({ activePath, user }) {
                     <img src="vite.svg" alt="" />
                     <h3 className="text-3xl ml-8 font-semibold">Rent Car</h3>
                 </div>
-                <div className={`flex ${user && user.is_admin ? "w-[700px]" : "w-[380px]"} justify-between text-xl`}>
+                <div className={`flex w-[380px] justify-between text-xl`}>
                     {userPath.map(path => {
                         return <a key={path.name} href={path.path} className={activePath === path.path ? "text-blue-700" : "" }>{path.name}</a>
                     })}
                     {/* <a href="/" className={activePath === "/" ? "text-blue-700" : "" }>Home</a>
                     <a href="/cars" className={activePath === "/cars" ? "text-blue-700" : "" }>Available Cars</a>
                     <a href="/about" className={activePath === "/about" ? "text-blue-700" : "" }>About Us</a> */}
-                    {user && user.is_admin ? (  
-                        <>
-                            <a href="/admin/car/create" className={activePath === '/admin/car/create' ? "text-blue-700" : "" }>Create Car</a>
-                            <a href="admin/rent/create" className={activePath === '/admin/rent/create' ? "text-blue-700" : "" }>Create Rent</a>
-                            <a href="/admin/user/create" className={activePath === '/admin/user/create' ? "text-blue-700" : "" }>Create User</a>
-                        </>
+                    {user.name ? (  
+                            <a href="/rent" className={activePath === '/rent' ? "text-blue-700" : "" }>You Rent</a>
                     ) : ""}
                 </div>
-                {user.name != undefined ?
+                {user.name ?
                 (
-                    <div className="w-[120px] flex justify-between">
-                        {/* <Button to="/auth/register" className="bg-blue-500 hover:bg-blue-700">
+                    <div className="w-[280px] flex justify-between">
+                        <Button to="/dashboard" className="bg-blue-500 hover:bg-blue-700">
                             <p className="text-white">Dashboard</p>
-                        </Button> */}
+                        </Button>
                         <Button to="/auth/logout" className="bg-blue-200 hover:bg-blue-400">
                             <p className="text-blue-700">Logout</p>
                         </Button>

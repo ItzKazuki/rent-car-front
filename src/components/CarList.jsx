@@ -1,17 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import { changeRp } from "../api/http";
 
 export default function CarList({ id, title, description, price, photo }) {
     const navigate = useNavigate();
 
     const handleClick = (path, id) => navigate(path + id);
-
-    const changeRp = (num) => {
-        return new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR"
-        }).format(num);
-    };
-
 
     return (
         <div className="max-w-sm rounded overflow-hidden shadow-lg mr-5 ">

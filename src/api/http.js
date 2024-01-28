@@ -1,7 +1,13 @@
 import Cookies from "universal-cookie";
 
-const backendUrl = "http://backend-lks.kazukikun.space/a1";
+const backendUrl = "http://backend-lks.kazukikun.space/a1"; // set your backend here!
 export const cookie = new Cookies();
+export function changeRp(num) {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR"
+    }).format(num);
+}
 
 async function get(path) {
     try {
@@ -23,6 +29,9 @@ async function get(path) {
             method: 'GET',
             headers
         });
+
+        if(!response.ok) throw response.code;
+
         return response.json();
     } catch(err) {
         console.error(err);
@@ -52,6 +61,8 @@ async function post(path, data) {
             body: JSON.stringify(data)
         });
 
+        if(!response.ok) throw response.code;
+
         return response.json();
     } catch(err) {
         console.error(err);
@@ -59,7 +70,50 @@ async function post(path, data) {
     }
 }
 
+async function patch(path, data) {
+    try {
+        const token = cookie.get("token");
+        if(!token) throw "Token Missing!";
+        const response = await fetch(backendUrl + path, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(data)
+        })
+        if(!response.ok) throw response.code;
+        return response.json();
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+async function deleteMethod(path, data) {
+    try {
+        const token = cookie.get('token');
+
+        if(!token) throw "Token Missing!";
+
+        const response =await  fetch(backendUrl + path, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(data)
+        });
+
+        if(!response.ok) throw response.code;
+        return response.json();
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 export default {
     get,
-    post
+    post,
+    patch,
+    delete: deleteMethod,
 }
