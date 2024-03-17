@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import http, { cookie } from "../api/http";
+import http, { cookie } from "../../api/http";
 import { useEffect } from "react";
 
 export default function Logout() {
     const navigate = useNavigate();
     if(!cookie.get("token")) {
-        navigate("/");
+        navigate("/", { replace: true });
     }
 
     useEffect(() => {
@@ -14,7 +14,10 @@ export default function Logout() {
                 return;
             }
             cookie.remove("token");
-            return navigate("/");
+            return navigate("/", { replace: true });
+        }).catch(err => {
+            console.error(err)
+            alert("failed logging out, please check logs!")
         })
     })
     return <h1>Logging out....</h1>;

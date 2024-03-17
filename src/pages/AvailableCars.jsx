@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import http from "../api/http";
-import { Page } from "./App";
-import CarList from "../components/CarList";
+import { Page } from "../App";
+import { CarList, Loading } from "../components";
 
 export default function AvailableCars() {
     const [cars, setCars] = useState([]);
@@ -18,6 +18,10 @@ export default function AvailableCars() {
         http.get("/car/show").then(data => {
             setCars(data.cars);
             setLoading(false);
+        }).catch((err) => {
+            alert(err.error)
+            // after 5 sec refresh page
+            // setLoading(true);
         })
     }, [setCars]);
     
@@ -25,7 +29,9 @@ export default function AvailableCars() {
         <Page>
             <h3 className="text-3xl font-bold">Available cars</h3>
             <p>Rent your car now!</p>
-            {loading ? "Getting From API" : (
+            {loading ? (
+               <Loading />
+            ) : (
                 <div className="flex flex-row flex-wrap justify-center">
                     {cars.map(car => (
                         <CarList 

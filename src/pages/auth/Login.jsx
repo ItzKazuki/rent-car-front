@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import http, { cookie } from "../api/http";
-import Button from "../components/Button";
+import http, { cookie } from "../../api/http";
+import Button from "../../components/Button";
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -9,19 +9,27 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    // biar ga login2x
+    useEffect(() => {
+        if(cookie.get("token")) navigate("/", { replace: true });
+    })
+
     const handleSubmit = e => {
         e.preventDefault();
         // fetch to api
         setLoading(true);
-        http.post("/auth/login", {username, password}).then(res => {
+        http.post("/auth/login", {username, password}).then((res) => {     
             // set cookie
             cookie.set('token', res.token)
-            // set loading
             setLoading(false);
             // redirect home
-            navigate("/");
-        })
+            navigate("/", { replace: true });
+        }).catch((err) => {
+            alert(err.error);
+            setLoading(false);
+        });
     }
+
     return (
         <div className="w-full h-full max-w-xl mx-auto">
             <div className="my-40 mx-auto">
@@ -36,7 +44,7 @@ export default function Login() {
                         <input onChange={e => setPassword(e.target.value)} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" type="password" id="password" name="password" placeholder="******"/>
                     </div>
                     <div className="flex items-center justify-between">
-                        <Button className="bg-blue-500 hover:bg-blue-700 text-white font-bold">
+                        <Button className="bg-blue-500 hover:bg-blue-700 text-white font-bold" disabledBtn={loading ? true : false}>
                             {loading ?
                             "loading" :
                             "Login"}

@@ -1,7 +1,7 @@
-import { useState } from "react";
-import Button from "../components/Button";
+import { useState, useEffect } from "react";
+import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
-import http from "../api/http";
+import http, { cookie } from "../../api/http";
 
 export default function Register() {
     const [userForm, setUserForm] = useState({});
@@ -12,21 +12,24 @@ export default function Register() {
         [e.target.name]: e.target.value
     });
 
+    // biar ga login2x
+    useEffect(() => {
+        if(cookie.get("token")) navigate("/", { replace: true });
+    })
+
     const handleSubmit = e => {
         e.preventDefault();
 
         // set loading true
         setLoading(true);
         // post data
-        http.post("/auth/register", userForm).then(res => {
-            // if success navigate to home
-            if(!res.error) {
-                navigate("/");
-            }
-            // set validation err
+        http.post("/auth/register", userForm).then((res) => {
             //set loading false
+            console.log(res)
             setLoading(false);
-
+            navigate("/", { replace: true });
+        }).catch((err) => {
+            alert(err.error);
         });
     }
 
@@ -64,7 +67,7 @@ export default function Register() {
                         <input onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" type="password" id="password" name="password" placeholder="******"/>
                     </div>
                     <div className="flex items-center justify-between">
-                        <Button className="bg-blue-500 hover:bg-blue-700 text-white font-bold">
+                        <Button className="bg-blue-500 hover:bg-blue-700 text-white font-bold" disabledBtn={loading ? true : false}>
                             {loading ?
                             "loading" :
                             "Register"}

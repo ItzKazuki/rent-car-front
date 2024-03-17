@@ -1,22 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import http from "../api/http";
+import { ErrorCode } from "../components";
 
 export default function CarInfo() {
     const { id } = useParams();
     const [car, setCar] = useState({});
+    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleClick = (path, id) => navigate(path + id);
 
     useEffect(() => {
+        setLoading(true);
         http.post("/car/show", {car_id: id}).then(res => {
-            setLoading(true);
             setCar(res.car);
             setLoading(false)
+        }).catch(err => {
+            setError(true);
+            alert(err.error);
         })
-    }, [setCar]);
+    }, [id, setCar, setError]);
+
+    if(error) return <ErrorCode code={403} />
 
     return (
         <div className="w-full h-full max-w-xl mx-auto">

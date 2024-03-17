@@ -2,6 +2,7 @@ import Cookies from "universal-cookie";
 
 const backendUrl = "http://backend-lks.kazukikun.space/a1"; // set your backend here!
 export const cookie = new Cookies();
+
 export function changeRp(num) {
     return new Intl.NumberFormat("id-ID", {
         style: "currency",
@@ -10,64 +11,43 @@ export function changeRp(num) {
 }
 
 async function get(path) {
-    try {
-        const token = cookie.get('token');
-        let headers;
+    const token = cookie.get('token');
+    let headers = {
+        'Content-Type': 'application/json'
+    };
 
-        if(!token) {
-            headers = {
-                'Content-Type': 'application/json'
-            }
-        } else {
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            }
-        }
+    if(token) headers["Authorization"] = `Bearer ${token}`
 
-        const response = await fetch(backendUrl + path, {
-            method: 'GET',
-            headers
-        });
+    const response = await fetch(backendUrl + path, {
+        method: 'GET',
+        headers
+    });
 
-        if(!response.ok) throw response.code;
+    if(!response.ok) throw response.status == 503 ? { error: response.statusText } : await response.json();
+    console.log(response)
 
-        return response.json();
-    } catch(err) {
-        console.error(err);
-        throw err;
-    }
+    return await response.json();
 }
 
 async function post(path, data) {
-    try {
-        const token = cookie.get('token');
-        let headers;
+    const token = cookie.get("token");
+    
+    let headers = {
+        'Content-Type': 'application/json'
+    };
 
-        if(!token) {
-            headers = {
-                'Content-Type': 'application/json'
-            }
-        } else {
-            headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            }
-        }
+    if(token) headers["Authorization"] = `Bearer ${token}`;
 
-        const response = await fetch(backendUrl + path, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(data)
-        });
+    const response = await fetch(backendUrl + path, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data)
+    });
+    console.log(response)
 
-        if(!response.ok) throw response.code;
+    if(!response.ok) throw response.status == 503 ? { error: response.statusText } : await response.json();
 
-        return response.json();
-    } catch(err) {
-        console.error(err);
-        throw err;
-    }
+    return await response.json();
 }
 
 async function patch(path, data) {
@@ -78,14 +58,15 @@ async function patch(path, data) {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(data)
         })
-        if(!response.ok) throw response.code;
-        return response.json();
+        if(!response.ok) throw await response;
+        return await response.json();
     } catch(err) {
         console.log(err);
+        return err;
     }
 }
 
@@ -99,15 +80,16 @@ async function deleteMethod(path, data) {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(data)
         });
 
-        if(!response.ok) throw response.code;
-        return response.json();
+        if(!response.ok) throw await response;
+        return await response.json();
     } catch (err) {
         console.error(err);
+        return err;
     }
 }
 
